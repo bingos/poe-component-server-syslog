@@ -1,6 +1,10 @@
 POE::Component::Server::Syslog
 ==============================
 
+1.18	Thu May 28 09:39:45 BST 2009
+	- Deployment fixes to Makefile.PL
+	- Fixed warnings in tests
+
 1.16	Tue Apr 15 14:06:15 BST 2008
 	- Kwalitee fixes.
 

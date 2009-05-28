@@ -8,6 +8,7 @@ author          ('Matt Cashner (sungo@pobox.com)');
 version_from    ('VERSION');
 abstract_from	('lib/POE/Component/Server/Syslog.pm');
 license         ('bsd');
+auto_license    (holder => 'Matt Cashner');
 perl_version	('5.006001');
 
 build_requires	('Test::More' => 0.47);
@@ -22,6 +23,7 @@ requires        ('Time::ParseDate');
 requires        ('Test::More');
 requires        ('Carp');
 
-sign            (1);
+auto_provides;
+githubmeta;
 
 WriteAll();

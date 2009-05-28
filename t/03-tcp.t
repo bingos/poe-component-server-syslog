@@ -10,6 +10,8 @@ use POE::Component::Server::Syslog::TCP;
 
 our $TIME = time();
 
+our $timeout;
+
 my $loc = setlocale( LC_ALL, 'C' );
 
 POE::Session->create(
@@ -39,7 +41,7 @@ sub start {
 
 	$_[KERNEL]->delay('send_test_data' => 0.5);
 
-	$_[HEAP]->{timeout} = $_[KERNEL]->alarm_set('timeout' => time+4);
+	$timeout = $_[KERNEL]->alarm_set('timeout' => time+4);
 }
 
 sub sig {
@@ -71,7 +73,7 @@ sub send_test_data {
 
 sub client_input {
 
-	$_[KERNEL]->alarm_remove($_[HEAP]->{timeout});
+	$_[KERNEL]->alarm_remove($timeout);
 
     my $msg = $_[ARG0];
 	ok(defined $msg, "Got data stream");
@@ -89,7 +91,7 @@ sub client_input {
 		'input data is valid',
 	);
 
-	$_[KERNEL]->call($_[HEAP]->{syslog}, 'shutdown');
+	$_[KERNEL]->call($_[SESSION], 'shutdown');
 	POE::Kernel->stop();
 }
 
