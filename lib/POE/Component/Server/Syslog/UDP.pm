@@ -120,13 +120,11 @@ sub select_read {
 		while( ($records = $_[HEAP]->{filter}->get_one()) and (@$records > 0)) {
 			if(defined $records and ref $records eq 'ARRAY') {
 				foreach my $record (@$records) {
-					if( ( sockaddr_in( $remote_socket ) )[1]) {
-						$record->{host} = gethostbyaddr(
-							( sockaddr_in( $remote_socket ) )[1],
-							AF_INET,
-						);
-					} else {
-						$record->{host} = '[unknown]';
+					if (my $addr = (sockaddr_in($remote_socket))[1]) {
+						$record->{addr} = inet_ntoa($addr);
+						if (my $host = gethostbyaddr($addr, AF_INET)) {
+							$record->{host} = $host;
+						}
 					}
 
 					$_[KERNEL]->yield( 'client_input', $record );
@@ -300,9 +298,13 @@ The "facility" number decoded from the pri.
 
 The "severity" number decoded from the pri.
 
+=item * addr
+
+The remote address of the source in dotted-decimal notation.
+
 =item * host
 
-The host that sent the message.
+The hostname of the source, if available.
 
 =item * msg
 
