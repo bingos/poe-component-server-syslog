@@ -4,7 +4,7 @@ package POE::Component::Server::Syslog::UDP;
 use warnings;
 use strict;
 
-our $VERSION = '1.18';
+our $VERSION = '1.20';
 
 sub BINDADDR        () { '0.0.0.0' }
 sub BINDPORT        () { 514 }

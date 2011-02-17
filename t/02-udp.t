@@ -89,6 +89,7 @@ sub client_input {
 			host      => scalar gethostbyaddr(inet_aton('127.0.0.1'),AF_INET),
 			facility  => 0,
 			'time'    => $TIME,
+			addr      => '127.0.0.1',
 		},
 		'input data is valid',
 	);
