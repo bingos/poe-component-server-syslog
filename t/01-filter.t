@@ -10,7 +10,7 @@ use POSIX qw(strftime  setlocale LC_ALL LC_CTYPE);
 
 my $filter = POE::Filter::Syslog->new();
 
-my $loc = setlocale( LC_ALL, 'C' );
+my $loc = eval { setlocale( LC_ALL, 'C' ) };
 
 #
 # Syslog uses an ambiguous datetime format.  No year and no timezone.

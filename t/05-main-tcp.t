@@ -12,7 +12,7 @@ our $TIME = time;
 
 our $timeout;
 
-my $loc = setlocale( LC_ALL, 'C' );
+my $loc = eval { setlocale( LC_ALL, 'C' ) };
 
 POE::Session->create(
 	inline_states      => {
