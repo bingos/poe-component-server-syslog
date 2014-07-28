@@ -10,7 +10,7 @@ use POE::Component::Server::Syslog::TCP;
 
 our $TIME = time();
 
-my $loc = setlocale( LC_ALL, 'C' );
+my $loc = eval { setlocale( LC_ALL, 'C' ) };
 
 POE::Component::Server::Syslog::TCP->spawn(
 		Alias		 => 'moocow',

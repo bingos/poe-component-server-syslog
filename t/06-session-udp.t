@@ -11,7 +11,7 @@ use POE::Component::Server::Syslog::UDP;
 
 our $TIME = time();
 
-my $loc = setlocale( LC_ALL, 'C' );
+my $loc = eval { setlocale( LC_ALL, 'C' ) };
 
 POE::Component::Server::Syslog::UDP->spawn(
 		Alias		 => 'moocow',
