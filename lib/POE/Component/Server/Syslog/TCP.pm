@@ -1,14 +1,14 @@
 # $Id: TCP.pm 446 2004-12-27 00:57:57Z sungo $
 package POE::Component::Server::Syslog::TCP;
 
+#ABSTRACT: syslog tcp server
+
 use warnings;
 use strict;
 
-our $VERSION = '1.20';
-
 sub BINDADDR        () { '0.0.0.0' }
 sub BINDPORT        () { 514 }
-sub DATAGRAM_MAXLEN () { 1024 }  # syslogd defaults to this. as do most 
+sub DATAGRAM_MAXLEN () { 1024 }  # syslogd defaults to this. as do most
                                  # libc implementations of syslog
 
 use Params::Validate qw(validate_with);
@@ -110,7 +110,7 @@ sub socket_connect {
 
 	if( ( sockaddr_in( getpeername($handle) ) )[1]) {
 		$host = gethostbyaddr( ( sockaddr_in( getpeername($handle) ) )[1], AF_INET );
-	} 
+	}
     else {
 		$host = '[unknown]';
 	}
@@ -148,17 +148,17 @@ sub socket_input {
 			$input->{host} = $info->{host};
 			$_[KERNEL]->yield( 'client_input', $record );
 		}
-	} 
+	}
     elsif(ref $input && ref $input eq 'HASH') {
 		$input->{host} = $info->{host};
 		$_[KERNEL]->yield( 'client_input', $input );
 		$_[KERNEL]->post( $_, $_[HEAP]->{sessions}->{$_}->{inputevent}, $input )
 			for keys %{ $_[HEAP]->{sessions} };
-	} 
+	}
     else {
 		$_[KERNEL]->yield( 'client_error', $input );
 		$_[KERNEL]->post( $_, $_[HEAP]->{sessions}->{$_}->{errorevent}, $input )
-			for grep { defined $_[HEAP]->{sessions}->{errorevent} } 
+			for grep { defined $_[HEAP]->{sessions}->{errorevent} }
 			    keys %{ $_[HEAP]->{sessions} };
 	}
     return;
@@ -173,7 +173,7 @@ sub shutdown {
 	delete $heap->{wheels};
 	$kernel->alarm_remove_all();
 	$kernel->alias_remove( $_ ) for $kernel->alias_list();
-	$kernel->refcount_decrement( $_, __PACKAGE__ ) 
+	$kernel->refcount_decrement( $_, __PACKAGE__ )
 		for keys %{ $heap->{sessions} };
     return;
 }
@@ -226,13 +226,20 @@ sub unregister {
 }
 
 1;
-__END__
 
 =pod
 
-=head1 NAME
+=begin Pod::Coverage
 
-POE::Component::Server::Syslog::TCP
+       BINDADDR
+       BINDPORT
+       DATAGRAM_MAXLEN
+       socket_connect
+       socket_error
+       socket_input
+       start
+
+=end Pod::Coverage
 
 =head1 SYNOPSIS
 
@@ -255,11 +262,11 @@ This component provides very simple syslog services for POE.
 
 =head2 spawn()
 
-Spawns a new listener. For a standalone syslog server you may specify 
+Spawns a new listener. For a standalone syslog server you may specify
 C<InputState> option to register a subroutine that will be called on
 input events.
 
-For integration with other POE Sessions and Components you may use the 
+For integration with other POE Sessions and Components you may use the
 C<register> and C<unregister> states to request that input events be
 sent to your sessions.
 
@@ -352,7 +359,7 @@ Takes a number of parameters:
 Mandatory parameter, the name of the event in the registering session that will be triggered
 for input from clients. ARG0 will contain a hash reference. See C<InputHandler> for details.
 
-=item * ErrorEvent 
+=item * ErrorEvent
 
 Optional parameter, the name of the event in the registering session that will be triggered
 for input that cannot be parsed. ARG0 will contain the erroneous message.
@@ -370,54 +377,6 @@ This will unregister the sending session from receiving events.
 
 Termintes the component.
 
-=head1 DATE
-
-$Date: 2004-12-26 19:57:57 -0500 (Sun, 26 Dec 2004) $
-
-=head1 REVISION
-
-$Rev: 446 $
-
-Note: This does not necessarily correspond to the distribution version number.
-
-
-=head1 AUTHOR
-
-Matt Cashner (sungo@cpan.org)
-
-=head1 LICENSE
-
-Copyright (c) 2003-2004, Matt Cashner. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-=over 4
-
-=item * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-=item * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-=item * Neither the name of the Matt Cashner nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-
-=back
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 =cut
-
-1;
-__END__
 
 # sungo // vim: ts=4 sw=4 noexpandtab
